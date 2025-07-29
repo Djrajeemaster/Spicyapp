@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const LoginScreen = ({ navigation }) => {
@@ -14,8 +15,13 @@ const LoginScreen = ({ navigation }) => {
         username,
         password,
       });
-      const token = response.data.token;
-      navigation.navigate('Home');
+      const { token, role } = response.data;
+      await AsyncStorage.setItem('token', token);
+      if (role === 'admin') {
+        navigation.navigate('AdminDashboard');
+      } else {
+        navigation.navigate('Home');
+      }
     } catch (err) {
       setError('Invalid credentials');
     }
